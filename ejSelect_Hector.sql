@@ -12,7 +12,7 @@ CREATE TABLE fabricante (
 CREATE TABLE producto (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL,
-  precio decimal (7,2) NOT NULL, -- > pasamos de double a decimal (7,2) para no tener más de dos decimales en los precios.
+  precio decimal (7,2) NOT NULL, /* -> pasamos de double a decimal (7,2) para no tener más de dos decimales en los precios.*/
   id_fabricante INT UNSIGNED NOT NULL,
   FOREIGN KEY (id_fabricante) REFERENCES fabricante(id)
 );
@@ -54,57 +54,77 @@ select nombre, round(precio, 2) from producto;
 select * from producto;
 
 /* 4 - Lista el nombre de los productos, el precio en euros y el precio en dólares estadounidenses (USD).*/
-select nombre, concat(precio, '€'), concat(precio/1,09, '$') from producto.
+select nombre, concat(precio, '€'), concat(precio/1.09, '$') from producto.
 
 /* 5 - Lista el nombre de los productos, el precio en euros y el precio en dólares estadounidenses (USD). Utiliza los siguientes alias para las columnas: nombre de producto, euros, dólares. */ 
-select nombre, concat(precio, '€') as euros, concat(precio/1,09, '$') as dólares from producto;
+select nombre, concat(precio, '€') as euros, concat(round(precio/1.09,2), '$') as dólares from producto;
 
 /* 6 - Lista los nombres y los precios de todos los productos de la tabla producto, convirtiendo los nombres a mayúscula.*/
-select upper(nombre), precio from producto;
+select upper(nombre) as NOMBRE, precio from producto;
 
 /* 7 - Lista los nombres y los precios de todos los productos de la tabla producto, convirtiendo los nombres a minúscula.*/
-select lower(nombre), precio from producto;
+select lower(nombre) as nombre, precio from producto;
 
 /* 8 - Lista el nombre de todos los fabricantes en una columna, y en otra columna obtenga en mayúsculas los dos primeros caracteres del nombre del fabricante.*/
-select nombre from fabricante
+select nombre, upper(left(nombre,2)) as nombre_2mayu from fabricante; /*las 2 ultimas por la IZQ*/
+select nombre, upper(substring(nombre,1,2)) as nombre_2mayu from fabricante; /*desde la posicion 1 a la 2*/
 
 /* 9 - Lista los nombres y los precios de todos los productos de la tabla producto, redondeando el valor del precio.*/
+select nombre, round(precio, 0) as precio from producto;
 
 /* 10 - Lista los nombres y los precios de todos los productos de la tabla producto, truncando el valor del precio para mostrarlo sin ninguna cifra decimal.*/
+select nombre, truncate(precio,0) as precio from producto;
 
 /* 11 - Lista el identificador de los fabricantes que tienen productos en la tabla producto.*/
+select id_fabricante from producto;
 
 /* 12 - Lista el identificador de los fabricantes que tienen productos en la tabla producto, eliminando los identificadores que aparecen repetidos.*/
+select distinct id_fabricante from producto;
 
 /* 13 - Lista los nombres de los fabricantes ordenados de forma ascendente.*/
+select nombre from fabricante order by nombre asc;
 
 /* 14 - Lista los nombres de los fabricantes ordenados de forma descendente.*/
+select nombre from fabricante order by nombre desc;
 
 /* 15 - Lista los nombres de los productos ordenados en primer lugar por el nombre de forma ascendente y en segundo lugar por el precio de forma descendente.*/
+select nombre from producto
 
 /* 16 - Devuelve una lista con las 5 primeras filas de la tabla fabricante.*/
+select * from fabricante limit 5;
 
 /* 17 - Devuelve una lista con 2 filas a partir de la cuarta fila de la tabla fabricante. La cuarta fila también se debe incluir en la respuesta.*/
+select * from fabricante limit 3,2; /*a partir de la fila 3, 2 posiciones*/
 
 /* 18 - Lista el nombre y el precio del producto más barato. (Utilice solamente las cláusulas ORDER BY y LIMIT)*/
+select nombre, precio from producto order by precio asc limit 1;
 
 /* 19 - Lista el nombre y el precio del producto más caro. (Utilice solamente las cláusulas ORDER BY y LIMIT)*/
+select nombre, precio from producto order by precio desc limit 1;
 
 /* 20 - Lista el nombre de todos los productos del fabricante cuyo identificador de fabricante es igual a 2.*/
+select nombre from producto where id_fabricante=2;
 
 /* 21 - Lista el nombre de los productos que tienen un precio menor o igual a 120€.*/
+select nombre, precio from producto where precio<=120;
 
 /* 22 - Lista el nombre de los productos que tienen un precio mayor o igual a 400€.*/
+select nombre, precio from producto where precio>=400;
 
 /* 23 - Lista el nombre de los productos que no tienen un precio mayor o igual a 400€.*/
+select nombre, precio from producto where precio<400;
 
 /* 24 - Lista todos los productos que tengan un precio entre 80€ y 300€. Sin utilizar el operador BETWEEN.*/
+select nombre, precio from producto where precio>=80 and precio<=300;
 
 /* 25 - Lista todos los productos que tengan un precio entre 60€ y 200€. Utilizando el operador BETWEEN.*/
+select nombre, precio from producto where precio between 60 and 200;
 
 /* 26 - Lista todos los productos que tengan un precio mayor que 200€ y que el identificador de fabricante sea igual a 6.*/
+select nombre, precio from producto where precio >200 and id_fabricante=6;
 
 /* 27 - Lista todos los productos donde el identificador de fabricante sea 1, 3 o 5. Sin utilizar el operador IN.*/
+
 
 /* 28 - Lista todos los productos donde el identificador de fabricante sea 1, 3 o 5. Utilizando el operador IN.*/
 
@@ -149,7 +169,11 @@ select nombre from fabricante
 /* 10 - Devuelve un listado con el nombre y el precio de todos los productos de los fabricantes cuyo nombre termine por la vocal e.*/
 
 /* 11 - Devuelve un listado con el nombre y el precio de todos los productos cuyo nombre de fabricante contenga el carácter w en su nombre.*/
+select p.nombre, p.precio, f.nombre from producto as p join fabricante as f on f.id=p.id_fabricante where p.precio >= 180;
 
-/* 12 - Devuelve un listado con el nombre de producto, precio y nombre de fabricante, de todos los productos que tengan un precio mayor o igual a 180€. Ordene el resultado en primer lugar por el precio (en orden descendente) y en segundo lugar por el nombre (en orden ascendente)
+/* 12 - Devuelve un listado con el nombre de producto, precio y nombre de fabricante, de todos los productos que tengan un precio mayor o igual a 180€. Ordene el resultado en primer lugar por el precio (en orden descendente) y en segundo lugar por el nombre (en orden ascendente)*/
+select p.nombre, p.precio, f.nombre from producto as p join fabricante as f on f.id=p.id_fabricante where p.precio >= 180 order by p.precio desc, p.nombre desc;
 
 /* 13 - Devuelve un listado con el identificador y el nombre de fabricante, solamente de aquellos fabricantes que tienen productos asociados en la base de datos.*/
+
+
