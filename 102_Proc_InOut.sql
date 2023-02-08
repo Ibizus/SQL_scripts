@@ -34,7 +34,7 @@ drop table if exists empleados;
    select cantidadhijos+cantidad into cantidad 
      from empleados
      where documento=p_documento;
- end //
+ end //hijos
  delimiter ;
  
  -- Iniciamos un acumulador en cero
@@ -108,7 +108,7 @@ begin
 end //
 delimiter ;
 
-/* INICIALIZAMOS LAS VCARIABLES QUE PASAMOS A LA FUNCIÓN */
+/* INICIALIZAMOS LAS VARIABLES QUE PASAMOS A LA FUNCIÓN */
 set @maximo = 0;
 set @nombre = '';
 
@@ -116,6 +116,31 @@ set @nombre = '';
 call pa_max('Secretaria', @maximo, @nombre);
 select @maximo, @nombre;
 
+
+
+
+
+/* Hacer un procedimiento que reciba un apellido y devuelva su nombre, tengo que limitar la salida, elijo el primer nombre que cumpla el requisito:*/
+ drop procedure if exists pa_ape_nombre;
+
+delimiter //
+create procedure pa_ape_nombre(
+	inout ape varchar(20),
+	out nom varchar(20)
+	)
+begin
+	select nombre into nom
+	from empleados
+	where apellido=ape limit 1;
+end //
+delimiter ;
+
+/* INICIALIZAMOS LAS VARIABLES QUE PASAMOS A LA FUNCIÓN */
+set @nombre = '';
+set @apellido ='Perez';
+/* LLAMAMOS A LA FUNCION */
+call pa_ape_nombre(@apellido, @nombre);
+select @apellido, @nombre;
 
 
 
