@@ -89,7 +89,7 @@ select '22222222' as DNI, 0.18 as Retención, @sueldo as Sueldo_Base, @nuevosuel
 
 
 /* Diseña un procedimiento para que reciba una sección y devuelva el sueldo más alto que se cobra en esa seccióny el nombre de quien lo cobra */
- drop procedure if exists pa_max;
+drop procedure if exists pa_max;
 
 delimiter //
 create procedure pa_max(
@@ -118,8 +118,6 @@ select @maximo, @nombre;
 
 
 
-
-
 /* Hacer un procedimiento que reciba un apellido y devuelva su nombre, tengo que limitar la salida, elijo el primer nombre que cumpla el requisito:*/
  drop procedure if exists pa_ape_nombre;
 
@@ -141,14 +139,5 @@ set @apellido ='Perez';
 /* LLAMAMOS A LA FUNCION */
 call pa_ape_nombre(@apellido, @nombre);
 select @apellido, @nombre;
-
-
-
-
-
-
-
-
-
 
 
