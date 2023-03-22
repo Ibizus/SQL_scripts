@@ -24,7 +24,7 @@ CREATE TABLE alumnos (
 
 CREATE TABLE log_notas (
     id_incidencia INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    id_alumno INT UNSIGNED
+    id_alumno INT UNSIGNED,
     nombre VARCHAR(50) NOT NULL,
     apellido1 VARCHAR(50) NOT NULL,
     nota FLOAT,
@@ -40,11 +40,9 @@ BEFORE INSERT
 ON alumnos FOR EACH ROW
 BEGIN
   IF NEW.nota < 0 THEN
-  insert into log_notas values
-  (id_alumno, nombre, apellido1, NEW.nota,
-  (SELECT client_net_address
-  FROM sys.dm_exec_connections 
-  WHERE session_id = @@SPID), @@USER, CURRENT_DATE())
+  
+  insert into log_notas (id_alumno, nombre, apellido1, nota, ipv4, usuario, fecha_hora)
+  values (NEW.id, NEW.nombre, NEW.apellido1, NEW.nota, substring_index(USER(),'@',-1), VALUEOF(USER(),'@',-1), CURRENT_TIME());
   
     set NEW.nota = 0;
   ELSEIF NEW.nota > 10 THEN
@@ -61,6 +59,10 @@ BEFORE UPDATE
 ON alumnos FOR EACH ROW
 BEGIN
   IF NEW.nota < 0 THEN
+  
+    insert into log_notas (id_alumno, nombre, apellido1, nota, ipv4, usuario, fecha_hora)
+  values (NEW.id, NEW.nombre, NEW.apellido1, NEW.nota, substring_index(USER(),'@',-1), 	substring_index(USER(),'@',-1), CURRENT_TIME());
+  
     set NEW.nota = 0;
   ELSEIF NEW.nota > 10 THEN
     set NEW.nota = 10;
@@ -72,6 +74,7 @@ INSERT INTO alumnos VALUES (1, 'Pepe', 'López', -1);
 INSERT INTO alumnos VALUES (2, 'María', 'Sánchez', 11);
 INSERT INTO alumnos VALUES (3, 'Juan', 'Pérez', 8.5);
 SELECT * FROM alumnos;
+select * from log_notas;
 
 UPDATE alumnos SET nota = -4 WHERE id = 3;
 SELECT * FROM alumnos;
@@ -82,6 +85,7 @@ SELECT * FROM alumnos;
 UPDATE alumnos SET nota = 9.5 WHERE id = 3;
 SELECT * FROM alumnos;
 
+select * from log_notas;
 
 
 
