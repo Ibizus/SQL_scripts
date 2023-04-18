@@ -11,8 +11,8 @@ create table clientes (
 cod_cliente int primary key,
 nombre varchar(10),
 apellido varchar(10),
-fecha_nacimiento date),
-importe_total decimal(6,2);
+fecha_nacimiento date,
+importe_total decimal(6,2));
 
 create table facturas (
 cod_factura int primary key,
@@ -35,5 +35,41 @@ insert into facturas values (6, '2023/01/17',536, 3, true);
 
 select * from clientes;
 select * from facturas;
+
+/* Operativa diaria, cada día o cada noche se procesa */
+DELIMITER //
+DROP PROCEDURE IF EXISTS actualiza_facturas_clientes //
+CREATE PROCEDURE actualiza_facturas_clientes()
+BEGIN
+  
+  DECLARE var_final INTEGER;
+  
+  DECLARE var_cod_factura INTEGER;
+  DECLARE var_cod_cliente INTEGER;
+  DECLARE var_importe decimal(6,2);
+  DECLARE cursor_facturas CURSOR FOR
+  select cod_factura, cod_cliente, importe from facturas where ya_contabilizada=false;  
+  
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET var_final = 1;
+  OPEN cursor_facturas;
+  bucle: LOOP
+    FETCH cursor_facturas INTO var_cod_factura, var_cod_cliente, var_importe;
+    IF var_final = 1 THEN
+      LEAVE bucle;
+    END IF;
+    
+    UPDATE clientes SET importe_total = importe_total + var_importe
+    where cod_cliente = var_cod_cliente;
+    UPDATE facturas SET ya_contabilizada = true
+    where cod_factura = var_cod_factura;
+    
+  END LOOP bucle;
+  CLOSE cursor_facturas;
+END //
+DELIMITER ;
+call actualiza_facturas_clientes();
+select * from facturas;
+select * from clientes;
+
 
 

@@ -31,20 +31,27 @@ create table editoriales(
  insert into libros values (9,'Antologia poetica',3,47.9);
 
 select * from editoriales;
+
 DELIMITER //
 DROP PROCEDURE IF EXISTS actualiza_cantidades //
 CREATE PROCEDURE actualiza_cantidades()
 BEGIN
-  DECLARE... ;
-  ...
+  
+  DECLARE var_codigoeditorial INTEGER;
+  DECLARE var_final INTEGER;
+  DECLARE cursor_libros CURSOR FOR
+  select libros.codigoeditorial from libros;  
+  
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET var_final = 1;
   OPEN cursor_libros;
   bucle: LOOP
-    FETCH ... INTO ....;
+    FETCH cursor_libros INTO var_codigoeditorial;
     IF var_final = 1 THEN
       LEAVE bucle;
     END IF;
-    UPDATE ... SET ...  WHERE ...;
+    
+    UPDATE editoriales SET cantidad_libros= cantidad_libros+1 WHERE editoriales.codigo = var_codigoeditorial;
+    
   END LOOP bucle;
   CLOSE cursor_libros;
 END//
