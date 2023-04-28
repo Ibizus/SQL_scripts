@@ -38,7 +38,7 @@ DELIMITER //
 CREATE TRIGGER cheque_regalo
 BEFORE UPDATE
 ON vehiculos FOR EACH ROW
-BEGIN  /*ERROR*/
+BEGIN
 	IF NEW.puntos >= 100 THEN
 	INSERT into cheques_regalo (id_matricula, valor_cheque) values (new.id_matricula, truncate(new.puntos/100, 0)*100);
 	SET new.puntos = new.puntos - truncate(new.puntos/100, 0)*100;
