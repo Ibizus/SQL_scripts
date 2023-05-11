@@ -1,0 +1,54 @@
+/* PL/pgSQL y otro lenguajes
+procedurales en postgreSQL Introduccion a la programación del lado del servidor */
+
+drop table if exists estudiantes;
+create table estudiantes (
+	id_estudiante int primary key,
+	nombre varchar(30),
+	apell varchar(30),
+	edad int,
+	telefonos text[]); -- propio de ORDBMS (besas de datos orientadas a objetos relacionales)
+	
+insert into estudiantes values (1, 'Pedro', 'López', 17);
+insert into estudiantes values (2, 'Elisa', 'Sánchez', 18);
+insert into estudiantes values (3, 'Luis', 'Alonso', 17);
+insert into estudiantes values (4, 'Ana', 'Sánchez', 18);
+select * from estudiantes;
+select telefonos[1] from estudiantes;
+
+CREATE OR REPLACE FUNCTION sumar(valor1 int, valor2 int) RETURNS int AS
+$$
+
+BEGIN
+RETURN $1 + $2;
+END;
+$$ LANGUAGE plpgsql;
+
+select sumar(20,60);
+
+
+CREATE OR REPLACE FUNCTION borrado_selectivo(p_edad int) RETURNS void AS
+$$
+
+BEGIN
+DELETE from estudiantes AS e where e.edad <= p_edad;
+END;
+$$ LANGUAGE plpgsql;
+
+select borrado_selectivo(17);
+select * from estudiantes;
+
+/* Crear y probar una función que reciba como parámetros una edad y devuelva 
+el número de estudiantes que hay con esa edad */
+
+CREATE OR REPLACE FUNCTION edad_cantidades(valor1 int) RETURNS int AS
+$$
+
+BEGIN
+RETURN (select count(*) from estudiantes where edad = valor1);
+END;
+$$ LANGUAGE plpgsql;
+
+select edad_cantidades(18);
+/*select edad_cantidades(16);*/
+
