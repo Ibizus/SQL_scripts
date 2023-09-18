@@ -1,17 +1,14 @@
-/*DAM Examen Postgresql 25/05/2023*/
 drop table if exists ivas;
 create table ivas (
 	id_iva int primary key,
 	descripcion varchar(20),
 	valor decimal(4,2)
 );
-
 drop table if exists departamentos;
 create table departamentos (
 id_departamento int primary key,
 departamento varchar(20)
 );
-
 drop table if exists productos;
 create table productos (
 	id_producto int primary key,
@@ -41,7 +38,6 @@ create table lin_facturas (
 	primary key (id_factura, id_linea)
 );
 
-
 insert into ivas values (1,'Iva Reducido', 4.00);
 insert into ivas values (2,'Iva Normal', 10.00);
 insert into ivas values (3,'Iva Lujo', 16.00);
@@ -70,7 +66,6 @@ insert into cab_facturas values (1, 1,'2023-10-01');
 insert into cab_facturas values (2, 5,'2023-10-02');
 insert into cab_facturas values (3, 6,'2023-10-03');
 
-
 insert into lin_facturas values (1,1,2, 1);
 insert into lin_facturas values (1,2,3, 2);
 insert into lin_facturas values (1,3,4, 3);
@@ -88,6 +83,25 @@ Realizar una función pl/pgsql llamada "productos_por_iva(id int)" que recibe un
 que indica el número de productos que tienen asignado dicho iva.
 Antes de consultar el número de productos que tienen ese iva, se comprobará que existe el iva en la tabla de ivas. Si no existe, se emitirá un mensaje 
 avisando de que dicho iva no existe en la base de datos, y retornará un 0 sin hacer la consulta de los productos*/
+
+CREATE or replace FUNCTION productos_por_iva(id int) RETURNS int AS
+$$
+DECLARE
+	var_nom_iva int;
+	var_contador int;
+
+BEGIN
+	var_contador = 0;
+	select descripcion into var_nom_iva from ivas where id_iva = id;
+	if not found then 
+		raise notice 'El iva con id: % no existe en la base de datos', id;
+		exit;
+	else
+		return query select COUNT(*) into var_contador from productos where id_iva = id;
+	end if;
+END;
+$$ LANGUAGE plpgsql;
+select productos_por_iva(1);
 
 
 
@@ -107,9 +121,13 @@ xx    xxxxxxxxxxxxxx        xxxxxxxxx             xxxxxxxxxxx          xx       
 
 
 
+
+
 /* EJERCICIO 3:  (2,5 puntos)
 Realizar una función pl/pgsql llamada "importe_total_factura(id int)" que recibe un parámetro que es un identificador de cabecera de factura
 y retornará el importe total de la suma de los precios con iva de sus artículos.*/
+
+
 
 
 
